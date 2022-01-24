@@ -25,6 +25,10 @@ class Menu(FloatLayout):
 
     def HideMenuSection(self):
         make_invisible(self)
+        self.open_camera_sec()
+
+    def open_camera_sec(self):
+        self.add_widget(CameraSection())  # Hidden
 
     def open_dialog(self):
         if not self.dialog:
@@ -37,6 +41,10 @@ class Menu(FloatLayout):
 
 
 class HelpContent(BoxLayout):
+    pass
+
+
+class CameraSection(BoxLayout):
     pass
 
 
