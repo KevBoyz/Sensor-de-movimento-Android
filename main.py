@@ -1,34 +1,12 @@
-from kivymd.app import MDApp
-from kivymd.uix.floatlayout import FloatLayout
+from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.boxlayout import BoxLayout
 from kivymd.uix.dialog import MDDialog
-import webbrowser
+from kivy.lang import Builder
+from kivymd.app import MDApp
 
 
-def make_invisible(widget):
-    widget.visible = False
-    widget.size_hint_x = None
-    widget.size_hint_y = None
-    widget.height = 0
-    widget.width = 0
-    widget.text = ""
-    widget.opacity = 0
-
-
-class Root(FloatLayout):
-    def hyperlink(self, url):
-        webbrowser.open(url)
-
-
-class Menu(FloatLayout):
+class MainWindow(Screen):
     dialog = None
-
-    def HideMenuSection(self):
-        make_invisible(self)
-        self.open_camera_sec()
-
-    def open_camera_sec(self):
-        self.add_widget(CameraSection())  # Hidden
 
     def open_dialog(self):
         if not self.dialog:
@@ -44,16 +22,22 @@ class HelpContent(BoxLayout):
     pass
 
 
-class CameraSection(BoxLayout):
+class SecondWindow(Screen):
     pass
 
 
+class WindowManager(ScreenManager):
+    pass
 
-class MainApp(MDApp):
+
+kv = Builder.load_file("main.kv")
+
+
+class MyMainApp(MDApp):
     def build(self):
         self.theme_cls.primary_palette = 'Green'
         self.theme_cls.theme_style = 'Dark'
-        return Root()
+        return WindowManager()
 
 
-MainApp().run()
+MyMainApp().run()

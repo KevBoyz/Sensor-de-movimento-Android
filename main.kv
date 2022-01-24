@@ -1,14 +1,14 @@
-<Root>
-    menu: menu
-    Menu:
-        id: menu
+<WindowManager>:
+    MainWindow:
+    SecondWindow:
 
-<Menu>
+<MainWindow>:
+    name: "main"
     MDToolbar:
         pos_hint: {'center_x': .5, 'center_y': .96}
         title: 'Barra de ferramentas'
         specific_text_color: 'white'
-        left_action_items: [["menu", lambda x: x]]
+        left_action_items: [['cellphone', lambda x: x]]
         right_action_items: [["dots-vertical", lambda x: x]]
     MDIconButton:
         icon: 'android'
@@ -26,7 +26,6 @@
         font_size: 25
         theme_text_color: 'Custom'
         text_color: 1, 1, 0.99, 1
-        on_release: root.HideMenuSection()
     MDFillRoundFlatButton:
         text: 'Opções'
         size_hint_x: .5
@@ -34,7 +33,9 @@
         theme_text_color: 'Custom'
         text_color: 1, 1, 0.99, 1
         pos_hint: {'center_x': .5, 'center_y': .4}
-        on_release: root.HideMenuSection()
+        on_release:
+            app.root.current = "second"
+            root.manager.transition.direction = "right"
     MDFillRoundFlatButton:
         text: 'Como usar'
         size_hint_x: .5
@@ -53,6 +54,19 @@
             icon_color: 1, 1, 1, 1
             on_action_button: root.hyperlink('https://github.com/KevBoyz/Sensor-de-movimento-Android')
 
+<SecondWindow>:
+    name: "second"
+    MDToolbar:
+        pos_hint: {'center_x': .5, 'center_y': .96}
+        title: 'Barra de ferramentas'
+        specific_text_color: 'white'
+        left_action_items: [['cellphone', lambda x: x]]
+        right_action_items: [["arrow-right", lambda x: x]]
+    MDRaisedButton:
+        text: "Voltar"
+        on_release:
+            app.root.current = "main"
+            root.manager.transition.direction = "left"
 
 <HelpContent>
     size_hint_y: None
@@ -63,7 +77,3 @@
         text: 'O intuito deste app é transformar seu mobile em uma câmera de segurança sensivel a movimento. O uso é bem simples: Inicie a câmera pelo app e deixe o dispositivo totalmente parado, em alguns instantes a detecção de movimento será inicializada.'
     MDLabel:
         text: 'Sempre que um novo movimento for detectado será salva uma foto, servindo como provas de um invasor. A imagem ficará salva na galeria em um album com o nome do app. Tambem é possivel disparar um alarme em caso de detecção, caso queira ative em configurações.'
-
-<CameraSection>
-    Image:
-        source: 'gabiru.jpeg'
