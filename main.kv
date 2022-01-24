@@ -8,7 +8,6 @@
         pos_hint: {'center_x': .5, 'center_y': .96}
         title: 'Barra de ferramentas'
         specific_text_color: 'white'
-        left_action_items: [['cellphone', lambda x: x]]
         right_action_items: [["dots-vertical", lambda x: x]]
     MDIconButton:
         icon: 'android'
@@ -60,13 +59,51 @@
         pos_hint: {'center_x': .5, 'center_y': .96}
         title: 'Barra de ferramentas'
         specific_text_color: 'white'
-        left_action_items: [['cellphone', lambda x: x]]
-        right_action_items: [["arrow-right", lambda x: x]]
-    MDRaisedButton:
+        right_action_items: [["dots-vertical", lambda x: x]]
+    MDIconButton:
+        icon: 'android'
+        user_font_size: '90sp'
+        md_bg_color: 0, .6, 0, 1
+        pos_hint: {'center_x': .28, 'center_y': .76}
+    MDLabel:
+        text: 'Menu de Opções'
+        font_size: 50
+        pos_hint: {'center_x': .88, 'center_y': .76}
+    MDFillRoundFlatButton:
+        size_hint_x: .5
+        text: "Habilitar Alarme"
+        pos_hint: {'center_x': .5, 'center_y': .5}
+        font_size: 25
+        theme_text_color: 'Custom'
+        text_color: 1, 1, 0.99, 1
+    MDFillRoundFlatButton:
+        text: 'Alterar delay de captura'
+        size_hint_x: .5
+        font_size: 25
+        theme_text_color: 'Custom'
+        text_color: 1, 1, 0.99, 1
+        pos_hint: {'center_x': .5, 'center_y': .4}
+    MDFillRoundFlatButton:
         text: "Voltar"
+        size_hint_x: .5
+        font_size: 25
+        theme_text_color: 'Custom'
+        text_color: 1, 1, 0.99, 1
+        pos_hint: {'center_x': .5, 'center_y': .3}
         on_release:
             app.root.current = "main"
             root.manager.transition.direction = "left"
+    MDBottomAppBar:
+        MDToolbar:
+            title: 'Acesse o codigo fonte! Programado em Python com kivymd e opencv'
+            specific_text_color: 'white'
+            icon: "github"
+            type: "bottom"
+            mode: "end"
+            icon_color: 1, 1, 1, 1
+            on_action_button: root.hyperlink('https://github.com/KevBoyz/Sensor-de-movimento-Android')
+
+
 
 <HelpContent>
     size_hint_y: None
