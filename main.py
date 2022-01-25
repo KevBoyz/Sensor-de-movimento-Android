@@ -1,7 +1,6 @@
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.boxlayout import BoxLayout
 from kivymd.uix.dialog import MDDialog
-from kivy.lang import Builder
 from kivymd.app import MDApp
 from kivy.graphics.texture import Texture
 from kivy.clock import Clock
@@ -30,25 +29,8 @@ class SecondWindow(Screen):
 
 
 class ThirdWindow(Screen):
-    pass
-
-
-class WindowManager(ScreenManager):
-    pass
-
-
-kv = Builder.load_file("main.kv")
-
-
-class MyMainApp(MDApp):
-    def build(self):
-        self.theme_cls.primary_palette = 'Green'
-        self.theme_cls.theme_style = 'Dark'
-        global cap, texture
-        self.texture = Texture.create(size=(1000, 1000), colorfmt='bgr')
-        cap = cv2.VideoCapture(0)
+    def start(self):
         Clock.schedule_interval(self.load_video, 1.0 / 38.0)
-        return WindowManager()
 
     def load_video(self, *args):
         ret, frame1 = cap.read()
@@ -70,7 +52,21 @@ class MyMainApp(MDApp):
         texture = Texture.create(size=(frame1.shape[1], frame1.shape[0]), colorfmt='bgr')
         print(frame1.shape)
         texture.blit_buffer(buffer, colorfmt='bgr', bufferfmt='ubyte')
-        texture = texture
+        self.camera.texture = texture
 
 
-MyMainApp().run()
+class WindowManager(ScreenManager):
+    pass
+
+
+class MainApp(MDApp):
+    def build(self):
+        self.theme_cls.primary_palette = 'Green'
+        self.theme_cls.theme_style = 'Dark'
+        self.texture = Texture.create(size=(1000, 1000), colorfmt='bgr')
+        global cap
+        cap = cv2.VideoCapture(0)
+        return WindowManager()
+
+
+MainApp().run()

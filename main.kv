@@ -125,11 +125,19 @@
 <ThirdWindow>
     name: "third"
     camera: camera
-    orientation:  'vertical'
-    BoxLayout:
-        Image:
-            id: camera
-            texture: app.texture
+    btn: btn
+    MDRaisedButton:
+        id: btn
+        text: 'Iniciar App'
+        pos_hint: {'center_x': .5, 'center_y': .5}
+        size_hint: 1, 1
+        font_size: 25
+        theme_text_color: 'Custom'
+        text_color: 1, 1, 0.99, 1
+        on_release: root.start()
+    Image:
+        id: camera
+        texture: app.texture
 
 
 
