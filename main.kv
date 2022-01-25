@@ -1,6 +1,7 @@
 <WindowManager>:
     MainWindow:
     SecondWindow:
+    ThirdWindow:
 
 <MainWindow>:
     name: "main"
@@ -25,6 +26,9 @@
         font_size: 25
         theme_text_color: 'Custom'
         text_color: 1, 1, 0.99, 1
+        on_release:
+            app.root.current = "third"
+            root.manager.transition.direction = "left"
     MDFillRoundFlatButton:
         text: 'Opções'
         size_hint_x: .5
@@ -114,3 +118,16 @@
         text: 'O intuito deste app é transformar seu mobile em uma câmera de segurança sensivel a movimento. O uso é bem simples: Inicie a câmera pelo app e deixe o dispositivo totalmente parado, em alguns instantes a detecção de movimento será inicializada.'
     MDLabel:
         text: 'Sempre que um novo movimento for detectado será salva uma foto, servindo como provas de um invasor. A imagem ficará salva na galeria em um album com o nome do app. Tambem é possivel disparar um alarme em caso de detecção, caso queira ative em configurações.'
+
+<ThirdWindow>
+    name: "third"
+    orientation:  'vertical'
+    BoxLayout:
+        Button:
+            text: 'lol'
+            on_release:
+                app.root.current = "main"
+                root.manager.transition.direction = "right"
+
+
+

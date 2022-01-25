@@ -26,6 +26,10 @@ class SecondWindow(Screen):
     pass
 
 
+class ThirdWindow(Screen):
+    pass
+
+
 class WindowManager(ScreenManager):
     pass
 
