@@ -1,7 +1,10 @@
 <WindowManager>:
+    third: third
     MainWindow:
     SecondWindow:
     ThirdWindow:
+        id: third
+
 
 <MainWindow>:
     name: "main"
@@ -121,13 +124,12 @@
 
 <ThirdWindow>
     name: "third"
+    camera: camera
     orientation:  'vertical'
     BoxLayout:
-        Button:
-            text: 'lol'
-            on_release:
-                app.root.current = "main"
-                root.manager.transition.direction = "right"
+        Image:
+            id: camera
+            texture: app.texture
 
 
 
