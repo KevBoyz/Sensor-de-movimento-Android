@@ -4,6 +4,7 @@ from kivymd.uix.dialog import MDDialog
 from kivymd.app import MDApp
 from kivy.graphics.texture import Texture
 from kivy.clock import Clock
+import sqlite3 as sql
 import cv2
 
 
@@ -63,10 +64,23 @@ class MainApp(MDApp):
     def build(self):
         self.theme_cls.primary_palette = 'Green'
         self.theme_cls.theme_style = 'Dark'
+        self.conn = sql.connect('data_base')
         self.texture = Texture.create(size=(1000, 1000), colorfmt='bgr')
         global cap
         cap = cv2.VideoCapture(0)
         return WindowManager()
+
+    def update_alarm(self):
+        config = self.conn.execute('SELECT alarm, delay FROM config')
+        for row, i in enumerate(config):
+            if i == 0:
+                alarm = row
+        alarm = True if not alarm else alarm = False
+        self.conn.execute(f'UPDATE config SET alarm = {alarm}')
+
+    def update_delay(self, delay):
+        self.conn.execute(f'UPDATE config SET delay = {delay}')
+
 
 
 MainApp().run()
