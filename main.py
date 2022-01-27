@@ -6,6 +6,9 @@ from kivy.graphics.texture import Texture
 from kivy.clock import Clock
 import sqlite3 as sql
 import cv2
+from os import chdir
+
+chdir(r'C:\Users\Kevin\Documents\GitHub\Sensor-de-movimento-Android')  # Fix this
 
 
 class MainWindow(Screen):
@@ -64,22 +67,39 @@ class MainApp(MDApp):
     def build(self):
         self.theme_cls.primary_palette = 'Green'
         self.theme_cls.theme_style = 'Dark'
-        self.conn = sql.connect('data_base')
+        self.conn = sql.connect('data_base.db')
+        self.alarm_text = self.get_alarm(text=True)
         self.texture = Texture.create(size=(1000, 1000), colorfmt='bgr')
         global cap
         cap = cv2.VideoCapture(0)
         return WindowManager()
 
-    def update_alarm(self):
+    def get_alarm(self, text=False):
         config = self.conn.execute('SELECT alarm, delay FROM config')
-        for row, i in enumerate(config):
-            if i == 0:
-                alarm = row
-        alarm = True if not alarm else alarm = False
+        for row in config:
+            alarm = row[0]
+        if not alarm:
+            alarm = True
+        else:
+            alarm = False
+        if not text:
+            return alarm
+        else:
+            if not alarm:
+                return 'Alarme: Desabilitado'
+            else:
+                return 'Alarme: Habilitado'
+
+    def update_alarm(self):
+        alarm = self.get_alarm()
         self.conn.execute(f'UPDATE config SET alarm = {alarm}')
+        self.conn.commit()
+        self.alarm_text = self.get_alarm(text=True)
+        print(self.alarm_text)
 
     def update_delay(self, delay):
         self.conn.execute(f'UPDATE config SET delay = {delay}')
+        self.conn.commit()
 
 
 

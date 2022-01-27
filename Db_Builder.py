@@ -1,6 +1,6 @@
 import sqlite3 as sql
 
-conn = sql.connect('data_base')
+conn = sql.connect('data_base.db')
 
 
 def build(test=True):
@@ -12,11 +12,10 @@ def build(test=True):
     conn.commit() if not test else None
 
 
-def update_db(alarm=False, delay=0):
+def update(alarm=False, delay=0):
     conn.execute(f'UPDATE config SET alarm = {alarm}, delay = {delay}')
 
 
-build()
-update(True, 5)
+build(test=False)
 config = conn.execute('SELECT alarm, delay FROM config')
 [print(row) for row in config]
