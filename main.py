@@ -50,6 +50,8 @@ class HelpContent(BoxLayout):
 
 
 class SecondWindow(Screen):
+    dialog = None
+
     def get_alarm(self, text=False):
         config = conn.execute('SELECT alarm, delay FROM config')
         for row in config:
@@ -72,10 +74,38 @@ class SecondWindow(Screen):
         conn.commit()
         self.alarmbtn.text = self.get_alarm(text=True)
 
+
+
+    def open_dialog(self):
+        if not self.dialog:
+            self.dialog = MDDialog(
+                title="Alterar delay de captura",
+                type="custom",
+                content_cls=DelayContent()
+            )
+        self.dialog.open()
+
+
+class DelayContent(BoxLayout):
+
+    def delay_value(self):
+        config = conn.execute('SELECT delay FROM config')
+        for row in config:
+            delay = row[0]
+        return '\nValor atual: ' + str(delay) + '\n'
+
+    def validate(self):
+        try:
+            delay = float(self.input.text)
+            self.label.text = 'Valor atualizado!'
+            self.update_delay(delay)
+            self.value_label.text = self.delay_value()
+        except:
+            self.label.text = 'Valor inválido!'
+
     def update_delay(self, delay):
         conn.execute(f'UPDATE config SET delay = {delay}')
         conn.commit()
-
 
 class ThirdWindow(Screen):
     def start(self):

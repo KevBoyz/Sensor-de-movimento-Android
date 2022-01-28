@@ -103,6 +103,7 @@
         theme_text_color: 'Custom'
         text_color: 1, 1, 0.99, 1
         pos_hint: {'center_x': .5, 'center_y': .4}
+        on_release: root.open_dialog()
     MDFillRoundFlatButton:
         text: "Voltar"
         size_hint_x: .5
@@ -122,6 +123,36 @@
             mode: "end"
             icon_color: 1, 1, 1, 1
             on_action_button: root.hyperlink('https://github.com/KevBoyz/Sensor-de-movimento-Android')
+
+<DelayContent>
+    input: input
+    value_label: value_label
+    label: label
+    button: button
+    size_hint_y: None
+    type: 'custom'
+    orientation: 'vertical'
+    height: "190dp"
+    MDLabel:
+        text: 'O delay é o tempo que o aplicativo espera após salvar uma imagem de captura de movimento. Quanto maior o tempo, menos imagens capturadas. Tome como base o valor padrão: 0.5 (segundos)'
+    MDLabel:
+    MDLabel:
+        id: value_label
+        text: root.delay_value()
+    MDTextField:
+        id: input
+        hint_text: 'Novo valor de delay'
+    MDLabel:
+        id: label
+    MDRaisedButton:
+        id: button
+        text: 'Atualizar Delay'
+        theme_text_color: 'Custom'
+        text_color: 1, 1, 0.99, 1
+        size_hint_x: .8
+        pos_hint: {'center_x': .5, 'center_y': .4}
+        on_release: root.validate()
+
 
 <ThirdWindow>
     name: "third"
