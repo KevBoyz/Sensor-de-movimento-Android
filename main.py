@@ -5,10 +5,31 @@ from kivymd.app import MDApp
 from kivy.graphics.texture import Texture
 from kivy.clock import Clock
 import sqlite3 as sql
+from time import sleep
+from datetime import datetime
 import cv2
 import os
 
-os.chdir(os.path.abspath(os.path.dirname(__file__)))
+os.chdir(os.path.abspath(os.path.dirname(__file__)))  # Same folder as script
+
+
+class MainApp(MDApp):
+    def build(self):
+        self.theme_cls.primary_palette = 'Green'
+        self.theme_cls.theme_style = 'Dark'
+        global conn
+        conn = sql.connect('data_base.db')
+        self.texture = Texture.create(size=(1000, 1000), colorfmt='bgr')
+        scream = cv2.imread('AppScream.png')
+        buffer = cv2.flip(scream, 0).tostring()
+        self.texture.blit_buffer(buffer, colorfmt='bgr', bufferfmt='ubyte')
+        global cap
+        cap = cv2.VideoCapture(0)
+        return WindowManager()
+
+
+class WindowManager(ScreenManager):
+    pass
 
 
 class MainWindow(Screen):
@@ -59,6 +80,8 @@ class SecondWindow(Screen):
 class ThirdWindow(Screen):
     def start(self):
         Clock.schedule_interval(self.load_video, 1.0 / 38.0)
+        global delay
+        delay = [row for row in conn.execute('SELECT delay FROM config')][0][0]
 
     def load_video(self, *args):
         ret, frame1 = cap.read()
@@ -69,36 +92,20 @@ class ThirdWindow(Screen):
         _, thresh = cv2.threshold(blur, 20, 255, cv2.THRESH_BINARY)
         dilated = cv2.dilate(thresh, None, iterations=3)
         contours, _ = cv2.findContours(dilated, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        if len(contours) > 0:
+            cv2.imwrite(f'{str(datetime.now())}.jpg'.replace(':', ';'), frame1)
+            sleep(delay)
         for contour in contours:
             (x, y, w, h) = cv2.boundingRect(contour)
             if cv2.contourArea(contour) < 900:
                 continue
             cv2.rectangle(frame1, (x, y), (x + w, y + h), (0, 255, 0), 2)
-        frame1 = cv2.resize(frame1, (frame1.shape[1] * 2, frame1.shape[0] * 2))
         frame1 = cv2.flip(frame1, 1, 0)
+        frame1 = cv2.resize(frame1, (frame1.shape[1] * 2, frame1.shape[0] * 2))
         buffer = cv2.flip(frame1, 0).tostring()
         texture = Texture.create(size=(frame1.shape[1], frame1.shape[0]), colorfmt='bgr')
         texture.blit_buffer(buffer, colorfmt='bgr', bufferfmt='ubyte')
         self.camera.texture = texture
-
-
-class WindowManager(ScreenManager):
-    pass
-
-
-class MainApp(MDApp):
-    def build(self):
-        self.theme_cls.primary_palette = 'Green'
-        self.theme_cls.theme_style = 'Dark'
-        global conn
-        conn = sql.connect('data_base.db')
-        self.texture = Texture.create(size=(1000, 1000), colorfmt='bgr')
-        scream = cv2.imread('AppScream.png')
-        buffer = cv2.flip(scream, 0).tostring()
-        self.texture.blit_buffer(buffer, colorfmt='bgr', bufferfmt='ubyte')
-        global cap
-        cap = cv2.VideoCapture(0)
-        return WindowManager()
 
 
 MainApp().run()

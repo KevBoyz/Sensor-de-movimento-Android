@@ -5,7 +5,6 @@
     ThirdWindow:
         id: third
 
-
 <MainWindow>:
     name: "main"
     MDToolbar:
@@ -60,6 +59,17 @@
             icon_color: 1, 1, 1, 1
             on_action_button: root.hyperlink('https://github.com/KevBoyz/Sensor-de-movimento-Android')
 
+
+<HelpContent>
+    size_hint_y: None
+    type: 'custom'
+    orientation: 'vertical'
+    height: "190dp"
+    MDLabel:
+        text: 'O intuito deste app é transformar seu mobile em uma câmera de segurança sensivel a movimento. O uso é bem simples: Inicie a câmera pelo app e deixe o dispositivo totalmente parado, em alguns instantes a detecção de movimento será inicializada.'
+    MDLabel:
+        text: 'Sempre que um novo movimento for detectado será salva uma foto, servindo como provas de um invasor. A imagem ficará salva na galeria em um album com o nome do app. Tambem é possivel disparar um alarme em caso de detecção, caso queira ative em configurações.'
+
 <SecondWindow>:
     name: "second"
     alarmbtn: alarmbtn
@@ -112,18 +122,6 @@
             mode: "end"
             icon_color: 1, 1, 1, 1
             on_action_button: root.hyperlink('https://github.com/KevBoyz/Sensor-de-movimento-Android')
-
-
-
-<HelpContent>
-    size_hint_y: None
-    type: 'custom'
-    orientation: 'vertical'
-    height: "190dp"
-    MDLabel:
-        text: 'O intuito deste app é transformar seu mobile em uma câmera de segurança sensivel a movimento. O uso é bem simples: Inicie a câmera pelo app e deixe o dispositivo totalmente parado, em alguns instantes a detecção de movimento será inicializada.'
-    MDLabel:
-        text: 'Sempre que um novo movimento for detectado será salva uma foto, servindo como provas de um invasor. A imagem ficará salva na galeria em um album com o nome do app. Tambem é possivel disparar um alarme em caso de detecção, caso queira ative em configurações.'
 
 <ThirdWindow>
     name: "third"

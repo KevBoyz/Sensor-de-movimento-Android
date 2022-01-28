@@ -1,4 +1,5 @@
 import sqlite3 as sql
+from time import sleep
 
 conn = sql.connect('data_base.db')
 
@@ -8,10 +9,8 @@ def build(test=True):
             alarm BOOL NOT NULL,
             delay FLOAT NOT NULL)""")
     conn.execute("INSERT INTO config (alarm, delay) \
-          Values (False, 0)")
+          Values (False, 0.5)")
     conn.commit() if not test else None
 
-
-build(test=False)
-config = conn.execute('SELECT alarm, delay FROM config')
-[print(row) for row in config]
+print([row for row in conn.execute('SELECT delay FROM config')][0][0])
+sleep([row for row in conn.execute('SELECT delay FROM config')])
