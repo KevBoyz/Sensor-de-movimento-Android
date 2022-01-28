@@ -62,6 +62,7 @@
 
 <SecondWindow>:
     name: "second"
+    alarmbtn: alarmbtn
     MDToolbar:
         pos_hint: {'center_x': .5, 'center_y': .96}
         title: 'Barra de ferramentas'
@@ -77,13 +78,14 @@
         font_size: 50
         pos_hint: {'center_x': .88, 'center_y': .76}
     MDFillRoundFlatButton:
+        id: alarmbtn
         size_hint_x: .5
-        text: app.alarm_text
+        text: root.get_alarm(text=True)
         pos_hint: {'center_x': .5, 'center_y': .5}
         font_size: 25
         theme_text_color: 'Custom'
         text_color: 1, 1, 0.99, 1
-        on_release: app.update_alarm()
+        on_press: root.update_alarm()
     MDFillRoundFlatButton:
         text: 'Alterar delay de captura'
         size_hint_x: .5

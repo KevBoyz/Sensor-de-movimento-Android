@@ -6,9 +6,9 @@ from kivy.graphics.texture import Texture
 from kivy.clock import Clock
 import sqlite3 as sql
 import cv2
-from os import chdir
+import os
 
-chdir(r'C:\Users\Kevin\Documents\GitHub\Sensor-de-movimento-Android')  # Fix this
+os.chdir(os.path.abspath(os.path.dirname(__file__)))
 
 
 class MainWindow(Screen):
@@ -29,7 +29,31 @@ class HelpContent(BoxLayout):
 
 
 class SecondWindow(Screen):
-    pass
+    def get_alarm(self, text=False):
+        config = conn.execute('SELECT alarm, delay FROM config')
+        for row in config:
+            alarm = row[0]
+        if not alarm:
+            alarm = True
+        else:
+            alarm = False
+        if not text:
+            return alarm
+        else:
+            if not alarm:
+                return 'Alarme: Desabilitado'
+            else:
+                return 'Alarme: Habilitado'
+
+    def update_alarm(self):
+        alarm = self.get_alarm()
+        conn.execute(f'UPDATE config SET alarm = {alarm}')
+        conn.commit()
+        self.alarmbtn.text = self.get_alarm(text=True)
+
+    def update_delay(self, delay):
+        conn.execute(f'UPDATE config SET delay = {delay}')
+        conn.commit()
 
 
 class ThirdWindow(Screen):
@@ -54,7 +78,6 @@ class ThirdWindow(Screen):
         frame1 = cv2.flip(frame1, 1, 0)
         buffer = cv2.flip(frame1, 0).tostring()
         texture = Texture.create(size=(frame1.shape[1], frame1.shape[0]), colorfmt='bgr')
-        print(frame1.shape)
         texture.blit_buffer(buffer, colorfmt='bgr', bufferfmt='ubyte')
         self.camera.texture = texture
 
@@ -67,40 +90,15 @@ class MainApp(MDApp):
     def build(self):
         self.theme_cls.primary_palette = 'Green'
         self.theme_cls.theme_style = 'Dark'
-        self.conn = sql.connect('data_base.db')
-        self.alarm_text = self.get_alarm(text=True)
+        global conn
+        conn = sql.connect('data_base.db')
         self.texture = Texture.create(size=(1000, 1000), colorfmt='bgr')
+        scream = cv2.imread('AppScream.png')
+        buffer = cv2.flip(scream, 0).tostring()
+        self.texture.blit_buffer(buffer, colorfmt='bgr', bufferfmt='ubyte')
         global cap
         cap = cv2.VideoCapture(0)
         return WindowManager()
-
-    def get_alarm(self, text=False):
-        config = self.conn.execute('SELECT alarm, delay FROM config')
-        for row in config:
-            alarm = row[0]
-        if not alarm:
-            alarm = True
-        else:
-            alarm = False
-        if not text:
-            return alarm
-        else:
-            if not alarm:
-                return 'Alarme: Desabilitado'
-            else:
-                return 'Alarme: Habilitado'
-
-    def update_alarm(self):
-        alarm = self.get_alarm()
-        self.conn.execute(f'UPDATE config SET alarm = {alarm}')
-        self.conn.commit()
-        self.alarm_text = self.get_alarm(text=True)
-        print(self.alarm_text)
-
-    def update_delay(self, delay):
-        self.conn.execute(f'UPDATE config SET delay = {delay}')
-        self.conn.commit()
-
 
 
 MainApp().run()
