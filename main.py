@@ -110,6 +110,7 @@ class DelayContent(BoxLayout):
 
 class ThirdWindow(Screen):
     def start(self):
+        sleep(3)
         Clock.schedule_interval(self.load_video, 1.0 / 38.0)
         global delay
         delay = [row for row in conn.execute('SELECT delay FROM config')][0][0]
