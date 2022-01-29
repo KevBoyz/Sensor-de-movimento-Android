@@ -3,6 +3,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivymd.uix.dialog import MDDialog
 from kivymd.app import MDApp
 from kivy.graphics.texture import Texture
+from kivy.core.audio import SoundLoader
 from kivy.clock import Clock
 import sqlite3 as sql
 from time import sleep
@@ -64,9 +65,9 @@ class SecondWindow(Screen):
             return alarm
         else:
             if not alarm:
-                return 'Alarme: Desabilitado'
-            else:
                 return 'Alarme: Habilitado'
+            else:
+                return 'Alarme: Desabilitado'
 
     def update_alarm(self):
         alarm = self.get_alarm()
@@ -112,6 +113,10 @@ class ThirdWindow(Screen):
         Clock.schedule_interval(self.load_video, 1.0 / 38.0)
         global delay
         delay = [row for row in conn.execute('SELECT delay FROM config')][0][0]
+        global alarm
+        alarm = [row for row in conn.execute('SELECT alarm FROM config')][0][0]
+        global sound
+        sound = SoundLoader.load('alarm_sound.mp3')
 
     def load_video(self, *args):
         ret, frame1 = cap.read()
@@ -124,7 +129,11 @@ class ThirdWindow(Screen):
         contours, _ = cv2.findContours(dilated, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         if len(contours) > 0:
             cv2.imwrite(f'{str(datetime.now())}.jpg'.replace(':', ';'), frame1)
-            sleep(delay)
+            if alarm:
+               sound.play()
+            slp = True
+        else:
+            slp = False
         for contour in contours:
             (x, y, w, h) = cv2.boundingRect(contour)
             if cv2.contourArea(contour) < 900:
@@ -136,6 +145,11 @@ class ThirdWindow(Screen):
         texture = Texture.create(size=(frame1.shape[1], frame1.shape[0]), colorfmt='bgr')
         texture.blit_buffer(buffer, colorfmt='bgr', bufferfmt='ubyte')
         self.camera.texture = texture
+        if slp:
+            sleep(delay)
+            print('sleep')
+        else:
+            print('None')
 
 
 MainApp().run()
