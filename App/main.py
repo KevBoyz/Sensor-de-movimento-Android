@@ -1,17 +1,24 @@
+# Sensor de movimento Android by KevBoyz
+# If you want see more like this github.com/kevboyz
+# Version: 1.0 Released on 30/01/22 (Stable for now)
+
 from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.uix.boxlayout import BoxLayout
-from kivymd.uix.dialog import MDDialog
-from kivymd.app import MDApp
 from kivy.graphics.texture import Texture
+from kivy.uix.boxlayout import BoxLayout
 from kivy.core.audio import SoundLoader
-from kivy.clock import Clock
-import sqlite3 as sql
-from time import sleep
+from kivymd.uix.dialog import MDDialog
 from datetime import datetime
+from kivy.clock import Clock
+from kivymd.app import MDApp
+from time import sleep
+import sqlite3 as sql
 import cv2
 import os
 
 os.chdir(os.path.abspath(os.path.dirname(__file__)))  # Same folder as script
+
+if 'detection-images' not in os.listdir('.'):
+    os.mkdir('detection-images')
 
 
 class MainApp(MDApp):
@@ -19,10 +26,10 @@ class MainApp(MDApp):
         self.theme_cls.primary_palette = 'Green'
         self.theme_cls.theme_style = 'Dark'
         global conn
-        conn = sql.connect('data_base.db')
+        conn = sql.connect('assets/data_base.db')
         self.texture = Texture.create(size=(1000, 1000), colorfmt='bgr')
-        scream = cv2.imread('AppScream.png')
-        buffer = cv2.flip(scream, 0).tostring()
+        scream = cv2.imread('assets/AppScream.png')
+        buffer = cv2.flip(scream, 0).tobytes()
         self.texture.blit_buffer(buffer, colorfmt='bgr', bufferfmt='ubyte')
         global cap
         cap = cv2.VideoCapture(0)
@@ -88,7 +95,6 @@ class SecondWindow(Screen):
 
 
 class DelayContent(BoxLayout):
-
     def delay_value(self):
         config = conn.execute('SELECT delay FROM config')
         for row in config:
@@ -108,6 +114,7 @@ class DelayContent(BoxLayout):
         conn.execute(f'UPDATE config SET delay = {delay}')
         conn.commit()
 
+
 class ThirdWindow(Screen):
     def start(self):
         sleep(3)
@@ -117,7 +124,7 @@ class ThirdWindow(Screen):
         global alarm
         alarm = [row for row in conn.execute('SELECT alarm FROM config')][0][0]
         global sound
-        sound = SoundLoader.load('alarm_sound.mp3')
+        sound = SoundLoader.load('assets/alarm_sound.mp3')
 
     def load_video(self, *args):
         ret, frame1 = cap.read()
@@ -129,8 +136,8 @@ class ThirdWindow(Screen):
         dilated = cv2.dilate(thresh, None, iterations=3)
         contours, _ = cv2.findContours(dilated, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         if len(contours) > 0:
-            cv2.imwrite(f'{str(datetime.now())}.jpg'.replace(':', ';'), frame1)
-            if alarm:
+            cv2.imwrite(f'detection-images/{str(datetime.now())}.jpg'.replace(':', ';'), frame1)
+            if alarm and len(contours) > 5:
                sound.play()
             slp = True
         else:
@@ -142,15 +149,12 @@ class ThirdWindow(Screen):
             cv2.rectangle(frame1, (x, y), (x + w, y + h), (0, 255, 0), 2)
         frame1 = cv2.flip(frame1, 1, 0)
         frame1 = cv2.resize(frame1, (frame1.shape[1] * 2, frame1.shape[0] * 2))
-        buffer = cv2.flip(frame1, 0).tostring()
+        buffer = cv2.flip(frame1, 0).tobytes()
         texture = Texture.create(size=(frame1.shape[1], frame1.shape[0]), colorfmt='bgr')
         texture.blit_buffer(buffer, colorfmt='bgr', bufferfmt='ubyte')
         self.camera.texture = texture
         if slp:
             sleep(delay)
-            print('sleep')
-        else:
-            print('None')
 
 
 MainApp().run()
